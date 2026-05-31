@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["id", "timestamp", "source", "foods", "nutrition"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "source": {"type": "string", "enum": ["manual", "text", "image", "image+text", "import"]},
+    "source_context": {"type": "object", "additionalProperties": true},
+    "foods": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["label", "amount", "unit"],
+        "properties": {
+          "label": {"type": "string", "minLength": 1},
+          "amount": {"type": "number", "minimum": 0},
+          "unit": {"type": "string", "minLength": 1},
+          "estimated": {"type": "boolean"},
+          "confidence": {"type": "string", "enum": ["low", "medium", "high"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "nutrition": {
+      "type": "object",
+      "required": ["kcal", "protein_g", "fat_g", "carbs_g"],
+      "properties": {
+        "kcal": {"type": "number", "minimum": 0},
+        "protein_g": {"type": "number", "minimum": 0},
+        "fat_g": {"type": "number", "minimum": 0},
+        "carbs_g": {"type": "number", "minimum": 0},
+        "fiber_g": {"type": "number", "minimum": 0},
+        "saturated_fat_g": {"type": "number", "minimum": 0},
+        "sugar_g": {"type": "number", "minimum": 0},
+        "added_sugar_g": {"type": "number", "minimum": 0},
+        "sodium_mg": {"type": "number", "minimum": 0},
+        "cholesterol_mg": {"type": "number", "minimum": 0},
+        "trans_fat_g": {"type": "number", "minimum": 0},
+        "polyunsaturated_fat_g": {"type": "number", "minimum": 0},
+        "monounsaturated_fat_g": {"type": "number", "minimum": 0},
+        "caffeine_mg": {"type": "number", "minimum": 0},
+        "alcohol_g": {"type": "number", "minimum": 0},
+        "vitamin_d_ug": {"type": "number", "minimum": 0},
+        "calcium_mg": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "micros": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}},
+    "quality_signals": {
+      "type": "object",
+      "properties": {
+        "fruit_servings": {"type": "number", "minimum": 0},
+        "vegetable_servings": {"type": "number", "minimum": 0},
+        "highly_processed": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "string"},
+    "revision": {"type": "integer", "minimum": 1}
+  },
+  "additionalProperties": true
+}

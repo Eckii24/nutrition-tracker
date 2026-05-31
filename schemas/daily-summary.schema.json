@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["date", "meals", "totals", "goals", "delta", "progress_pct", "signals"],
+  "properties": {
+    "date": {"type": "string", "format": "date"},
+    "meals": {"type": "array", "items": {"type": "object"}},
+    "totals": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+    "goals": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+    "delta": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+    "progress_pct": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+    "signals": {"type": "object", "additionalProperties": true}
+  },
+  "additionalProperties": true
+}

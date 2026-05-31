@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["week", "included_dates", "days_tracked", "days_total", "coverage_pct", "averages"],
+  "properties": {
+    "week": {"type": "string", "pattern": "^\\d{4}-W\\d{2}$"},
+    "included_dates": {"type": "array", "items": {"type": "string", "format": "date"}},
+    "days_tracked": {"type": "integer", "minimum": 0},
+    "days_total": {"type": "integer", "minimum": 1},
+    "coverage_pct": {"type": "number", "minimum": 0},
+    "averages": {"type": "object", "additionalProperties": {"type": ["number", "null"]}}
+  },
+  "additionalProperties": true
+}

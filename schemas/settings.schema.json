@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["profile", "goal_inputs", "goals", "defaults"],
+  "properties": {
+    "profile": {
+      "type": "object",
+      "required": ["sex", "date_of_birth", "height_cm", "weight_kg", "activity_level", "goal_mode"],
+      "properties": {
+        "sex": {"type": "string"},
+        "date_of_birth": {"type": "string", "format": "date"},
+        "height_cm": {"type": "number", "exclusiveMinimum": 0},
+        "weight_kg": {"type": "number", "exclusiveMinimum": 0},
+        "activity_level": {"type": "string"},
+        "goal_mode": {"type": "string"},
+        "body_fat_percent": {"type": ["number", "null"], "minimum": 0, "maximum": 100}
+      },
+      "additionalProperties": true
+    },
+    "goal_inputs": {"type": "object", "additionalProperties": true},
+    "goals": {
+      "type": "object",
+      "required": ["mode", "daily", "overrides"],
+      "properties": {
+        "mode": {"type": "string"},
+        "daily": {"type": "object", "additionalProperties": true},
+        "overrides": {"type": "object", "additionalProperties": true}
+      },
+      "additionalProperties": true
+    },
+    "defaults": {"type": "object", "additionalProperties": true}
+  },
+  "additionalProperties": true
+}

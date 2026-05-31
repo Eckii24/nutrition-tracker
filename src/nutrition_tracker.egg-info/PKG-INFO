@@ -1,3 +1,15 @@
+Metadata-Version: 2.4
+Name: nutrition-tracker
+Version: 0.1.0
+Summary: Deterministic local CLI backend for a file-based nutrition tracker
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: typer>=0.12
+Requires-Dist: jsonschema>=4.22
+Provides-Extra: dev
+Requires-Dist: pytest>=8.2; extra == "dev"
+Requires-Dist: ruff>=0.5; extra == "dev"
+
 # Nutrition Tracker
 
 Lokales, dateibasiertes Nutrition-Tracking mit AI-gestützter Erfassung aus Bildern und Freitext.

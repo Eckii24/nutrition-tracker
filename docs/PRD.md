@@ -389,65 +389,74 @@ Das Produkt ist nützlich, wenn es zuverlässig ermöglicht:
 ## 14. MVP-Vorschlag
 
 ### MVP Scope
-- lokale dateibasierte Speicherung
+- lokale dateibasierte Speicherung als Source of Truth
+- primärer Hermes-/Telegram-Workflow
+- lokale CLI als internes Werkzeug für manuelle Erfassung, Korrektur und Auswertung
 - Mahlzeitserfassung per Text
 - Mahlzeitserfassung per Bild + kurze Beschreibung
 - Tagesaggregation
+- Wochenmittel auf Basis aggregierter Tageswerte
 - Ziele für Kalorien + Makros + Ballaststoffe
-- einfache qualitative Tagesbewertung
-- manuelle Korrektur von Mahlzeiten
+- Zielableitung aus Profilwerten in `settings.json`, aber überschreibbar
+- analytisch-coachende qualitative Tagesbewertung im LLM-Layer
+- manuelle Korrektur von Mahlzeiten per natürlicher Sprache
 
 ### Nicht im MVP
-- umfangreiche Wochen-/Monatsanalytics
+- native Web-UI
+- umfangreiche Monatsanalytics über Standard-Weekly-Averages hinaus
 - tiefe Rezeptverwaltung
 - Barcode-Scanner
+- persistente Bildspeicherung
 - externe Food-DB-Integrationen mit großem Scope
 - vollautomatische Mikronährstoffabdeckung für jedes Lebensmittel
 
 ---
 
-## 15. Offene Produktfragen
-
-Diese Punkte müssen wir vor dem eigentlichen Build festzurren:
+## 15. Festgezurrte Produktentscheidungen
 
 1. **Plattformform**
-   - Nur Hermes/Telegram-Workflow?
-   - Oder zusätzlich lokale CLI/Web-UI?
+   - primär Hermes-/Telegram-Workflow
+   - zusätzlich lokale CLI als internes Werkzeug ohne eigenen LLM-Bezug
+   - die CLI liefert strukturierte Rohdaten; Coaching passiert im Skill/LLM-Layer
 
 2. **Zielmodell**
-   - fixe Tagesziele?
-   - Trainings- vs. Ruhetag?
-   - Wochenmittel relevant oder erstmal nur Tagessicht?
+   - Tagesziele + Wochenmittel
+   - keine separaten Trainings-/Ruhetag-Ziele im MVP
+   - Ziele werden aus Profilwerten abgeleitet und können manuell überschrieben werden
 
-3. **Mikronährstoffe Priorität**
-   - Welche 5–10 Mikros sind dir wirklich wichtig?
+3. **Mikronährstoffe**
+   - im MVP keine priorisierte Mikro-Zielsteuerung
+   - Mikros bleiben optionales Beifang-Signal, aber nicht zentraler Scope
 
 4. **Bewertungslogik**
-   - Soll die qualitative Bewertung eher nüchtern-analytisch oder coachend sein?
+   - analytisch und coachend
+   - CLI selbst bewertet nicht frei-textlich; sie liefert Fakten/Signals
+   - der Skill formuliert die eigentliche Ernährungsbewertung
 
 5. **Korrektur-UX**
-   - Soll Korrektur per natürlicher Sprache reichen?
-   - Oder willst du stabile Meal-IDs sichtbar bekommen?
+   - primär natürlicher Sprachstil
+   - stabile IDs existieren intern trotzdem für Referenz und Revisionssicherheit
 
 6. **Bilderhaltung**
-   - Bilder nur transient analysieren?
-   - lokal referenzieren?
-   - dauerhaft aufheben?
+   - Bilder werden analysiert, aber nicht gespeichert
+   - nur strukturierte Extrakte und Metadaten werden persistiert
 
-7. **Lebensmittelquelle**
-   - rein AI-Schätzung?
-   - oder zusätzlich kuratierte Referenzdaten/Lookups?
+7. **Personalisierung**
+   - Profilwerte liegen in `settings.json`
+   - alle sinnvollen Werte zur Zielableitung dürfen genutzt werden
+   - abgeleitete Ziele bleiben manuell überschreibbar
 
-8. **Personalisierung**
-   - Sollen Ziele aus Körperdaten/Aktivität abgeleitet werden oder manuell gesetzt werden?
+8. **Health Boundary**
+   - CLI = Rohdaten, Summen, Defizite, Zielvergleich
+   - Skill = Coaching, Einordnung, Vorschläge
 
-9. **Health Boundary**
-   - rein informativ?
-   - oder mit ernährungsstrategischen Empfehlungen?
+9. **Historie/Analytics**
+   - Tagessicht ist primär
+   - Wochenmittel gehören in den MVP
 
-10. **Historie/Analytics**
-   - Brauchst du von Anfang an Wochen-/Monatsreports?
-   - Oder reicht erstmal der Tagesfokus?
+10. **Referenz auf Tracker-Standards**
+   - Makro-/Kalorien-Tracking orientiert sich an gängigen Tracker-Apps
+   - der erwähnte Screenshot lag in diesem Kontext nicht maschinenlesbar vor; konkrete UI-/Felddetails daraus sind daher noch nicht übernommen
 
 ---
 
@@ -458,7 +467,8 @@ Als nächstes sollten wir ein **konkretes Spec-Dokument** ableiten mit:
 - Eventformaten
 - Zielschema
 - Bewertungsheuristiken
-- User-Flows als Kommandos/Prompts
+- CLI-Kommandos und JSON-Ausgaben
+- Hermes-/Skill-Flows
 - MVP-Grenzen
 
-Kurz: Erst das Verhalten sauber definieren, dann bauen.
+Kurz: Erst Verhalten und Schnittstellen präzise machen, dann bauen.

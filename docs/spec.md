@@ -534,19 +534,61 @@ This split matters. Otherwise the CLI becomes a hidden prompt-engine, which is t
 
 ## 12. Standard Metrics for MVP
 
-Because no machine-readable screenshot was available in this session, the MVP defaults to common tracker metrics:
+A screenshot from an existing tracker app is now available and confirms a sensible baseline metric set.
+
+### Visible tracker fields from the screenshot
+- kcal
+- fat_g (`Gesamtfett`)
+- saturated_fat_g (`Gesättigtes Fett`)
+- trans_fat_g (`Transfett`)
+- polyunsaturated_fat_g (`Mehrfachfett`)
+- monounsaturated_fat_g (`Einfachfett`)
+- cholesterol_mg
+- sodium_mg
+- carbs_g (`Gesamtkohlenhydrate`)
+- fiber_g (`Ballaststoffe`)
+- sugar_g (`Gesamtzucker`)
+- added_sugar_g (`Zuckerzusatz`)
+- protein_g
+- caffeine_mg
+- alcohol_g
+- vitamin_d_ug
+- calcium_mg
+
+### MVP required goal metrics
+These should be first-class in the MVP and supported in daily + weekly summaries:
 - kcal
 - protein_g
 - fat_g
 - carbs_g
 - fiber_g
 
-Optional informational fields:
-- sugar_g
+### MVP extended informational metrics
+These should be modeled already if practical, even if not all are used for goal logic on day 1:
 - saturated_fat_g
+- sugar_g
+- added_sugar_g
 - sodium_mg
+- cholesterol_mg
 
-But these optional fields are not required for MVP goal logic.
+### Deferred-but-schema-friendly metrics
+Useful to support in the schema early, even if often missing from AI estimates:
+- trans_fat_g
+- polyunsaturated_fat_g
+- monounsaturated_fat_g
+- caffeine_mg
+- alcohol_g
+- vitamin_d_ug
+- calcium_mg
+
+### Practical recommendation
+Do not make the full micronutrient surface mandatory for every meal event.
+AI extraction will frequently be uncertain or incomplete there.
+Instead:
+- require core macro fields
+- allow nullable/optional extended nutrition fields
+- aggregate extended fields when present
+- use missingness explicitly instead of inventing values
 
 ---
 

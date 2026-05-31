@@ -456,7 +456,8 @@ Das Produkt ist nützlich, wenn es zuverlässig ermöglicht:
 
 10. **Referenz auf Tracker-Standards**
    - Makro-/Kalorien-Tracking orientiert sich an gängigen Tracker-Apps
-   - der erwähnte Screenshot lag in diesem Kontext nicht maschinenlesbar vor; konkrete UI-/Felddetails daraus sind daher noch nicht übernommen
+   - sichtbare Standardfelder aus dem bereitgestellten Screenshot: Kalorien, Gesamtfett, gesättigtes Fett, Transfett, mehrfach ungesättigtes Fett, einfach ungesättigtes Fett, Cholesterin, Natrium, Gesamtkohlenhydrate, Ballaststoffe, Gesamtzucker, Zuckerzusatz, Protein, Koffein, Alkohol, Vitamin D, Kalzium
+   - für den MVP werden Kalorien, Protein, Fett, Kohlenhydrate und Ballaststoffe als Kern-Zielmetriken behandelt; zusätzliche Felder sollen schemafähig vorgesehen werden
 
 ---
 

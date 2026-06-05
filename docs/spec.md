@@ -19,7 +19,6 @@ The CLI itself must remain non-agentic: no direct LLM calls, no coaching prose, 
 - profile-based goal derivation from `settings.json`
 - manual overrides for derived goals
 - meal logging from structured input
-- correction / revision support
 - daily summaries
 - weekly averages
 - deterministic CLI JSON output
@@ -52,7 +51,6 @@ Deterministic commands for:
 - init
 - profile management
 - meal entry
-- correction
 - day summary
 - week summary
 - export/debug
@@ -92,9 +90,6 @@ nutrition-tracker/
     meals/
       2026/
         2026-05-31.jsonl
-    corrections/
-      2026/
-        2026-05-31.jsonl
     daily/
       2026/
         2026-05-31.summary.json
@@ -104,7 +99,6 @@ nutrition-tracker/
   schemas/
     settings.schema.json
     meal-entry.schema.json
-    correction-entry.schema.json
     daily-summary.schema.json
     weekly-summary.schema.json
 ```
@@ -113,7 +107,6 @@ nutrition-tracker/
 Source of truth is:
 - `data/settings.json`
 - append-only meal events in `data/meals/**/*.jsonl`
-- append-only correction events in `data/corrections/**/*.jsonl`
 
 Derived artifacts:
 - `data/daily/**/*.summary.json`
@@ -191,7 +184,7 @@ The system must preserve both:
 
 ## 6.1 Event semantics
 Each meal entry is append-only.
-Edits are represented by correction events, not silent in-place mutation.
+If a value changes later, the private app repo may update the structured meal file directly and rely on Git history for auditability.
 
 ## 6.2 Meal entry schema
 
@@ -269,51 +262,11 @@ Allowed values:
 
 ---
 
-## 7. Correction Model
+## 7. Editing Model
 
-## 7.1 Purpose
-Corrections preserve traceability.
-A correction can:
-- replace nutrition values
-- replace foods list
-- cancel a meal
-- add notes
-
-## 7.2 Correction event schema
-
-```json
-{
-  "id": "corr_2026-05-31T13-10-00+02-00_001",
-  "timestamp": "2026-05-31T13:10:00+02:00",
-  "meal_id": "meal_2026-05-31T12-34-56+02-00_001",
-  "operation": "replace",
-  "changes": {
-    "foods": [
-      {
-        "label": "Skyr natur",
-        "amount": 300,
-        "unit": "g",
-        "estimated": false,
-        "confidence": "high"
-      }
-    ],
-    "nutrition": {
-      "kcal": 210,
-      "protein_g": 33,
-      "fat_g": 0.6,
-      "carbs_g": 12,
-      "fiber_g": 0
-    }
-  },
-  "reason": "User corrected portion size",
-  "revision": 2
-}
-```
-
-## 7.3 Allowed operations
-- `replace`
-- `cancel`
-- `annotate`
+The CLI no longer exposes a separate correction event stream.
+Corrections happen by directly editing structured meal files in the private app repo.
+The CLI then validates and rebuilds summaries deterministically from the current stored meals.
 
 ---
 
@@ -322,7 +275,7 @@ A correction can:
 ## 8.1 Daily summary
 A daily summary must include:
 - date
-- all effective meals after corrections
+- all stored meals for that day
 - totals
 - goals
 - deltas
@@ -440,16 +393,8 @@ Example:
 nutrition meal add --file meal.json --json
 ```
 
-### `nutrition meal correct`
-Adds a correction event.
-
-Example:
-```bash
-nutrition meal correct --file correction.json --json
-```
-
 ### `nutrition day show`
-Returns effective daily view.
+Returns daily view from stored meals.
 
 Example:
 ```bash
@@ -489,23 +434,23 @@ nutrition doctor --json
 2. Hermes analyzes image.
 3. Hermes extracts structured meal candidate.
 4. Hermes states uncertainty and assumptions.
-5. Hermes submits deterministic payload to CLI.
-6. CLI stores meal and returns daily summary JSON.
+5. Hermes writes or updates the structured meal data in the private app repo.
+6. CLI validates stored data and returns daily summary JSON.
 7. Hermes generates user-facing feedback and coaching.
 
 ## 10.2 Text-based logging
 1. User sends text description.
 2. Hermes extracts foods/amounts.
 3. If ambiguity is too high, Hermes asks follow-up.
-4. Hermes calls CLI with structured payload.
+4. Hermes writes or updates structured meal data in the private app repo.
 5. CLI returns updated day state.
 6. Hermes responds with summary + coaching.
 
-## 10.3 Correction flow
+## 10.3 Update flow
 1. User says e.g. "Das waren eher 250g Reis statt 150g."
 2. Hermes resolves target meal.
-3. Hermes builds correction payload.
-4. CLI writes correction event.
+3. Hermes updates the structured meal data in the private app repo.
+4. CLI validates current files.
 5. CLI rebuilds day summary.
 6. Hermes replies with changed totals and interpretation.
 
@@ -598,7 +543,6 @@ The CLI must reject:
 - invalid JSON
 - schema violations
 - impossible negative nutrition values
-- corrections targeting unknown meal IDs
 - malformed timestamps
 
 The CLI should warn, but not necessarily reject:
@@ -615,7 +559,7 @@ Still open before implementation:
 2. local nutrition reference source / lookup approach
 3. exact schema versioning strategy
 4. whether summaries are eagerly written or computed on read with cache refresh
-5. exact natural-language correction resolution strategy in Hermes skill
+5. exact Hermes edit/write workflow for updating existing meal files
 
 ---
 

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any
 
-from nutrition_tracker.paths import corrections_dir, daily_dir, data_dir, meals_dir, settings_path, weekly_dir
+from nutrition_tracker.paths import daily_dir, data_dir, meals_dir, settings_path, weekly_dir
 from nutrition_tracker.repositories.settings_repo import default_settings, save_settings
 from nutrition_tracker.schema_registry import write_default_schemas
 from nutrition_tracker.services.goal_service import derive_goal_entries
@@ -10,7 +10,7 @@ from nutrition_tracker.services.goal_service import derive_goal_entries
 def init_project(root: Path) -> dict[str, Any]:
     root = root.resolve()
     created: list[str] = []
-    for directory in [data_dir(root), meals_dir(root), corrections_dir(root), daily_dir(root), weekly_dir(root)]:
+    for directory in [data_dir(root), meals_dir(root), daily_dir(root), weekly_dir(root)]:
         existed = directory.exists()
         directory.mkdir(parents=True, exist_ok=True)
         if not existed:

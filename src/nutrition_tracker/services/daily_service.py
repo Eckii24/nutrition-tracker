@@ -1,76 +1,13 @@
-from __future__ import annotations
-
-from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
 from nutrition_tracker.constants import ALL_NUTRITION_METRICS, GOAL_METRICS, REQUIRED_NUTRITION_METRICS
-from nutrition_tracker.repositories.correction_repo import iter_all_corrections
 from nutrition_tracker.repositories.meal_repo import read_meals_for_date
 from nutrition_tracker.repositories.settings_repo import load_settings
 from nutrition_tracker.repositories.summary_repo import save_daily_summary
 from nutrition_tracker.schema_registry import validate_payload
 from nutrition_tracker.services.goal_service import effective_goals
 from nutrition_tracker.utils.dates import parse_date, parse_timestamp
-
-
-def _sorted_corrections(corrections: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return sorted(corrections, key=lambda item: item.get("timestamp", ""))
-
-
-def _apply_replace(meal: dict[str, Any], changes: dict[str, Any], revision: int) -> dict[str, Any]:
-    updated = deepcopy(meal)
-    for key, value in changes.items():
-        if key in {
-            "foods",
-            "nutrition",
-            "notes",
-            "assumptions",
-            "quality_signals",
-            "micros",
-            "source_context",
-        }:
-            updated[key] = value
-    updated["revision"] = revision
-    return updated
-
-
-def project_meals_for_date(root: Path, date_str: str) -> list[dict[str, Any]]:
-    parse_date(date_str)
-    base_meals = [deepcopy(meal) for meal in read_meals_for_date(root, date_str)]
-    by_id = {meal["id"]: meal for meal in base_meals}
-    cancelled: set[str] = set()
-
-    relevant = [corr for corr in iter_all_corrections(root) if corr.get("meal_id") in by_id]
-    for correction in _sorted_corrections(relevant):
-        meal_id = correction["meal_id"]
-        operation = correction["operation"]
-        revision = int(correction.get("revision", by_id[meal_id].get("revision", 1) + 1))
-        if operation == "cancel":
-            cancelled.add(meal_id)
-            by_id[meal_id]["revision"] = revision
-        elif operation == "replace":
-            by_id[meal_id] = _apply_replace(by_id[meal_id], correction.get("changes", {}), revision)
-            cancelled.discard(meal_id)
-        elif operation == "annotate":
-            changes = correction.get("changes", {})
-            if "notes" in changes:
-                existing = by_id[meal_id].get("notes", "")
-                by_id[meal_id]["notes"] = "\n".join(part for part in [existing, changes["notes"]] if part)
-            by_id[meal_id]["revision"] = revision
-
-    projected: list[dict[str, Any]] = []
-    for meal in base_meals:
-        effective = deepcopy(by_id[meal["id"]])
-        is_cancelled = meal["id"] in cancelled
-        effective["cancelled"] = is_cancelled
-        effective["effective"] = not is_cancelled
-        projected.append(effective)
-    return projected
-
-
-def effective_meals_for_date(root: Path, date_str: str) -> list[dict[str, Any]]:
-    return [meal for meal in project_meals_for_date(root, date_str) if meal.get("effective", True)]
 
 
 def _round_number(value: float) -> float | int:
@@ -155,11 +92,11 @@ def _signals(meals: list[dict[str, Any]]) -> dict[str, Any]:
 
 def build_daily_summary(root: Path, date_str: str) -> dict[str, Any]:
     parse_date(date_str)
-    for meal in read_meals_for_date(root, date_str):
+    meals = read_meals_for_date(root, date_str)
+    for meal in meals:
         validate_payload(root, "meal-entry.schema.json", meal)
         parse_timestamp(meal["timestamp"])
 
-    meals = effective_meals_for_date(root, date_str)
     totals = calculate_totals(meals)
     goals = _goal_values(root)
     summary = {
@@ -177,5 +114,6 @@ def build_daily_summary(root: Path, date_str: str) -> dict[str, Any]:
 
 
 def list_meals(root: Path, date_str: str) -> dict[str, Any]:
-    meals = project_meals_for_date(root, date_str)
+    parse_date(date_str)
+    meals = read_meals_for_date(root, date_str)
     return {"date": date_str, "meals": meals}

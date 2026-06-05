@@ -234,16 +234,12 @@ nutrition-tracker/
     meals/
       2026/
         2026-05-31.jsonl
-    corrections/
-      2026/
-        2026-05-31.jsonl
     daily/
       2026/
         2026-05-31.summary.json
         2026-05-31.report.md
   schemas/
     meal-entry.schema.json
-    correction-entry.schema.json
     daily-summary.schema.json
 ```
 
@@ -293,15 +289,10 @@ nutrition-tracker/
 }
 ```
 
-## 9.4 Korrekturmodell
+## 9.4 Änderungsmodell
 
-Keine destruktive Mutation als erste Wahl.
-Stattdessen Korrektur-Event, z. B.:
-- Menge angepasst
-- Zutat ergänzt
-- Mahlzeit gelöscht / storniert
-
-So bleibt Historie erhalten.
+Strukturierte Mahlzeitendaten dürfen im privaten Repo direkt editiert werden.
+Auditierbarkeit kommt primär aus Git-Historie und nachvollziehbaren JSON-Änderungen, nicht aus einem separaten Correction-Event-Stream.
 
 ---
 
@@ -347,7 +338,7 @@ Deshalb braucht es:
 - strukturierte Extraktion
 - Schema-Validierung
 - explizite Annahmen
-- Korrekturmechanismus
+- überprüfbare Dateischreib- oder Edit-Flows
 
 ---
 
@@ -391,7 +382,7 @@ Das Produkt ist nützlich, wenn es zuverlässig ermöglicht:
 ### MVP Scope
 - lokale dateibasierte Speicherung als Source of Truth
 - primärer Hermes-/Telegram-Workflow
-- lokale CLI als internes Werkzeug für manuelle Erfassung, Korrektur und Auswertung
+- lokale CLI als internes Werkzeug für Validierung und Auswertung
 - Mahlzeitserfassung per Text
 - Mahlzeitserfassung per Bild + kurze Beschreibung
 - Tagesaggregation
@@ -399,7 +390,7 @@ Das Produkt ist nützlich, wenn es zuverlässig ermöglicht:
 - Ziele für Kalorien + Makros + Ballaststoffe
 - Zielableitung aus Profilwerten in `settings.json`, aber überschreibbar
 - analytisch-coachende qualitative Tagesbewertung im LLM-Layer
-- manuelle Korrektur von Mahlzeiten per natürlicher Sprache
+- direkte Bearbeitung strukturierter Mahlzeitendateien im privaten Repo
 
 ### Nicht im MVP
 - native Web-UI
@@ -433,9 +424,9 @@ Das Produkt ist nützlich, wenn es zuverlässig ermöglicht:
    - CLI selbst bewertet nicht frei-textlich; sie liefert Fakten/Signals
    - der Skill formuliert die eigentliche Ernährungsbewertung
 
-5. **Korrektur-UX**
-   - primär natürlicher Sprachstil
-   - stabile IDs existieren intern trotzdem für Referenz und Revisionssicherheit
+5. **Änderungs-UX**
+   - primär direkter Skill-gesteuerter Edit strukturierter Dateien im privaten Repo
+   - stabile IDs existieren intern trotzdem für Referenz und sichere Zuordnung
 
 6. **Bilderhaltung**
    - Bilder werden analysiert, aber nicht gespeichert

@@ -21,10 +21,6 @@ def meals_dir(root: Path) -> Path:
     return data_dir(root) / "meals"
 
 
-def corrections_dir(root: Path) -> Path:
-    return data_dir(root) / "corrections"
-
-
 def daily_dir(root: Path) -> Path:
     return data_dir(root) / "daily"
 
@@ -36,11 +32,6 @@ def weekly_dir(root: Path) -> Path:
 def meal_file(root: Path, date_str: str) -> Path:
     year = date_str[:4]
     return meals_dir(root) / year / f"{date_str}.jsonl"
-
-
-def correction_file(root: Path, date_str: str) -> Path:
-    year = date_str[:4]
-    return corrections_dir(root) / year / f"{date_str}.jsonl"
 
 
 def daily_summary_file(root: Path, date_str: str) -> Path:

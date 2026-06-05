@@ -58,22 +58,6 @@ MEAL_SCHEMA = {
     "additionalProperties": True,
 }
 
-CORRECTION_SCHEMA = {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-    "required": ["id", "timestamp", "meal_id", "operation", "changes", "reason", "revision"],
-    "properties": {
-        "id": {"type": "string", "minLength": 1},
-        "timestamp": {"type": "string", "format": "date-time"},
-        "meal_id": {"type": "string", "minLength": 1},
-        "operation": {"type": "string", "enum": ["replace", "cancel", "annotate"]},
-        "changes": {"type": "object", "additionalProperties": True},
-        "reason": {"type": "string", "minLength": 1},
-        "revision": {"type": "integer", "minimum": 1},
-    },
-    "additionalProperties": True,
-}
-
 SETTINGS_SCHEMA = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
@@ -155,7 +139,6 @@ WEEKLY_SUMMARY_SCHEMA = {
 SCHEMAS: dict[str, dict[str, Any]] = {
     "settings.schema.json": SETTINGS_SCHEMA,
     "meal-entry.schema.json": MEAL_SCHEMA,
-    "correction-entry.schema.json": CORRECTION_SCHEMA,
     "daily-summary.schema.json": DAILY_SUMMARY_SCHEMA,
     "weekly-summary.schema.json": WEEKLY_SUMMARY_SCHEMA,
 }

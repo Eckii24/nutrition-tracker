@@ -1,5 +1,7 @@
 # Nutrition Tracker MVP Implementation Plan
 
+> **Historical note:** This plan documents the original implementation path. The current repo no longer uses a separate correction-event model; direct structured file edits in the private app repo replaced it.
+
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
 
 **Goal:** Build a deterministic local CLI for the nutrition tracker MVP that persists file-based nutrition events, derives goals from `settings.json`, computes daily and weekly summaries, and exposes JSON-first commands for the Hermes skill layer.

@@ -3,8 +3,8 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from nutrition_tracker.cli import app
-from nutrition_tracker.schema_registry import load_schema
+from nutrition_tracker.infrastructure.schema_store import load_schema
+from nutrition_tracker.presentation.cli import app
 from tests.test_daily_service import add_sample_meal
 
 

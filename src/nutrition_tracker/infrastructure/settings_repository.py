@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Any
 
-from nutrition_tracker.jsonio import load_json_file, write_json_file
-from nutrition_tracker.paths import settings_path
-from nutrition_tracker.schema_registry import validate_payload
+from nutrition_tracker.domain.entities import Settings
+from nutrition_tracker.infrastructure.json_store import load_json_file, write_json_file
+from nutrition_tracker.infrastructure.project_paths import settings_path
+from nutrition_tracker.infrastructure.schema_store import validate_payload
 
 
-def default_settings() -> dict[str, Any]:
+def default_settings() -> Settings:
     return {
         "profile": {
             "sex": "male",
@@ -28,12 +30,12 @@ def default_settings() -> dict[str, Any]:
     }
 
 
-def load_settings(root: Path) -> dict[str, Any]:
+def load_settings(root: Path) -> Settings:
     settings = load_json_file(settings_path(root))
     validate_payload(root, "settings.schema.json", settings)
     return settings
 
 
-def save_settings(root: Path, settings: dict[str, Any]) -> None:
+def save_settings(root: Path, settings: Settings) -> None:
     validate_payload(root, "settings.schema.json", settings)
     write_json_file(settings_path(root), settings)

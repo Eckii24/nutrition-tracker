@@ -1,13 +1,22 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
 
-from nutrition_tracker.errors import NutritionTrackerError
-from nutrition_tracker.jsonio import iter_jsonl_with_line_numbers
-from nutrition_tracker.paths import daily_dir, data_dir, meals_dir, settings_path, weekly_dir
-from nutrition_tracker.repositories.meal_repo import iter_meal_files
-from nutrition_tracker.schema_registry import SCHEMAS, load_schema, validate_payload
-from nutrition_tracker.services.daily_service import build_daily_summary
-from nutrition_tracker.utils.dates import date_from_timestamp
+from nutrition_tracker.application.daily import build_daily_summary
+from nutrition_tracker.domain.dates import date_from_timestamp
+from nutrition_tracker.domain.errors import NutritionTrackerError
+from nutrition_tracker.infrastructure.json_store import iter_jsonl_with_line_numbers
+from nutrition_tracker.infrastructure.meal_repository import iter_meal_files
+from nutrition_tracker.infrastructure.project_paths import (
+    daily_dir,
+    data_dir,
+    meals_dir,
+    settings_path,
+    weekly_dir,
+)
+from nutrition_tracker.infrastructure.schema_store import SCHEMAS, load_schema, validate_payload
+from nutrition_tracker.infrastructure.settings_repository import load_settings
 
 
 def run_doctor(root: Path) -> dict[str, Any]:
@@ -28,8 +37,6 @@ def run_doctor(root: Path) -> dict[str, Any]:
         errors.append("Missing settings file: data/settings.json")
     else:
         try:
-            from nutrition_tracker.repositories.settings_repo import load_settings
-
             load_settings(root)
         except NutritionTrackerError as exc:
             errors.append(str(exc))

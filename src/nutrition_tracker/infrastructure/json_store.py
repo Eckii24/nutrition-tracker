@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import json
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-from nutrition_tracker.errors import ValidationError
+from nutrition_tracker.domain.errors import ValidationError
 
 
 def load_json_file(path: Path) -> dict[str, Any]:

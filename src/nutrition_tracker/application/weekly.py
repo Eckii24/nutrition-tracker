@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
 
-from nutrition_tracker.repositories.meal_repo import read_meals_for_date
-from nutrition_tracker.repositories.summary_repo import save_weekly_summary
-from nutrition_tracker.schema_registry import validate_payload
-from nutrition_tracker.services.daily_service import build_daily_summary
-from nutrition_tracker.utils.dates import iso_week_dates, parse_iso_week
+from nutrition_tracker.application.daily import build_daily_summary
+from nutrition_tracker.domain.dates import iso_week_dates, parse_iso_week
+from nutrition_tracker.domain.entities import WeeklySummary
+from nutrition_tracker.infrastructure.meal_repository import read_meals_for_date
+from nutrition_tracker.infrastructure.schema_store import validate_payload
+from nutrition_tracker.infrastructure.summary_repository import save_weekly_summary
 
 
 def _round_number(value: float) -> float | int:
@@ -15,7 +18,7 @@ def _round_number(value: float) -> float | int:
     return rounded
 
 
-def build_weekly_summary(root: Path, iso_week: str) -> dict[str, Any]:
+def build_weekly_summary(root: Path, iso_week: str) -> WeeklySummary:
     parse_iso_week(iso_week)
     included_dates: list[str] = []
     day_totals: list[dict[str, Any]] = []
@@ -39,7 +42,7 @@ def build_weekly_summary(root: Path, iso_week: str) -> dict[str, Any]:
             averages[metric] = _round_number(sum(values) / len(values))
 
     days_tracked = len(included_dates)
-    summary = {
+    summary: WeeklySummary = {
         "week": iso_week,
         "included_dates": included_dates,
         "days_tracked": days_tracked,

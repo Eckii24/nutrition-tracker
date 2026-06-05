@@ -5,10 +5,12 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-from nutrition_tracker.constants import ALL_NUTRITION_METRICS, REQUIRED_NUTRITION_METRICS
-from nutrition_tracker.errors import ValidationError
+from nutrition_tracker.domain.constants import ALL_NUTRITION_METRICS, REQUIRED_NUTRITION_METRICS
+from nutrition_tracker.domain.errors import ValidationError
 
-NUTRITION_PROPERTIES = {metric: {"type": "number", "minimum": 0} for metric in ALL_NUTRITION_METRICS}
+NUTRITION_PROPERTIES = {
+    metric: {"type": "number", "minimum": 0} for metric in ALL_NUTRITION_METRICS
+}
 
 FOOD_SCHEMA = {
     "type": "object",
@@ -40,7 +42,10 @@ MEAL_SCHEMA = {
     "properties": {
         "id": {"type": "string", "minLength": 1},
         "timestamp": {"type": "string", "format": "date-time"},
-        "source": {"type": "string", "enum": ["manual", "text", "image", "image+text", "import"]},
+        "source": {
+            "type": "string",
+            "enum": ["manual", "text", "image", "image+text", "import"],
+        },
         "source_context": {"type": "object", "additionalProperties": True},
         "foods": {"type": "array", "minItems": 1, "items": FOOD_SCHEMA},
         "nutrition": {
@@ -124,7 +129,14 @@ DAILY_SUMMARY_SCHEMA = {
 WEEKLY_SUMMARY_SCHEMA = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
-    "required": ["week", "included_dates", "days_tracked", "days_total", "coverage_pct", "averages"],
+    "required": [
+        "week",
+        "included_dates",
+        "days_tracked",
+        "days_total",
+        "coverage_pct",
+        "averages",
+    ],
     "properties": {
         "week": {"type": "string", "pattern": r"^\d{4}-W\d{2}$"},
         "included_dates": {"type": "array", "items": {"type": "string", "format": "date"}},
@@ -145,7 +157,7 @@ SCHEMAS: dict[str, dict[str, Any]] = {
 
 
 def package_schema_dir() -> Path:
-    return Path(__file__).resolve().parents[2] / "schemas"
+    return Path(__file__).resolve().parents[3] / "schemas"
 
 
 def load_schema(root: Path, name: str) -> dict[str, Any]:

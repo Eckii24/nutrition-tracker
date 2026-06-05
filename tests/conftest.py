@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from nutrition_tracker.cli import app
+from nutrition_tracker.presentation.cli import app
 
 
 @pytest.fixture()

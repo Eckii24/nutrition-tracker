@@ -66,7 +66,7 @@ Die Verzeichnisse `data/` und `schemas/` werden initial vom CLI-Tool angelegt bz
 ### Empfohlener Standard für Entwicklung im CLI-Repo: uv
 
 ```bash
-uv sync --all-extras
+uv sync --dev
 uv run nutrition --help
 ```
 
@@ -105,7 +105,7 @@ uv run nutrition --help
 Direkt als Modul:
 
 ```bash
-uv run python -m nutrition_tracker.cli --help
+uv run python -m nutrition_tracker.presentation.cli --help
 ```
 
 Als installiertes Tool:
@@ -246,7 +246,9 @@ Schemas live in `schemas/` and are copied by `nutrition init`.
 
 ```bash
 uv run ruff check src tests
-uv run pytest -v
+uv run ruff format --check src tests
+uv run ty check src
+uv run pytest -q
 ```
 
 ## Docs

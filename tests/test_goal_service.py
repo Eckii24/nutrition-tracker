@@ -2,8 +2,8 @@ import json
 
 from typer.testing import CliRunner
 
-from nutrition_tracker.cli import app
-from nutrition_tracker.services.goal_service import derive_goals
+from nutrition_tracker.application.goals import derive_goals
+from nutrition_tracker.presentation.cli import app
 
 
 def test_derive_goals_returns_core_targets():
@@ -34,7 +34,10 @@ def test_derive_goals_returns_core_targets():
 
 
 def test_goals_derive_command_updates_settings(initialized_root, runner: CliRunner):
-    result = runner.invoke(app, ["goals", "derive", "--path", str(initialized_root), "--json"])
+    result = runner.invoke(
+        app,
+        ["goals", "derive", "--path", str(initialized_root), "--json"],
+    )
     assert result.exit_code == 0, result.output
     payload = json.loads(result.stdout)
     assert payload["status"] == "ok"

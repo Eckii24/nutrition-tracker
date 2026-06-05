@@ -1,10 +1,18 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
 
-from nutrition_tracker.paths import daily_dir, data_dir, meals_dir, settings_path, weekly_dir
-from nutrition_tracker.repositories.settings_repo import default_settings, save_settings
-from nutrition_tracker.schema_registry import write_default_schemas
-from nutrition_tracker.services.goal_service import derive_goal_entries
+from nutrition_tracker.application.goals import derive_goal_entries
+from nutrition_tracker.infrastructure.project_paths import (
+    daily_dir,
+    data_dir,
+    meals_dir,
+    settings_path,
+    weekly_dir,
+)
+from nutrition_tracker.infrastructure.schema_store import write_default_schemas
+from nutrition_tracker.infrastructure.settings_repository import default_settings, save_settings
 
 
 def init_project(root: Path) -> dict[str, Any]:

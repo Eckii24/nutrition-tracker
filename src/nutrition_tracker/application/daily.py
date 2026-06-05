@@ -1,13 +1,20 @@
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
 
-from nutrition_tracker.constants import ALL_NUTRITION_METRICS, GOAL_METRICS, REQUIRED_NUTRITION_METRICS
-from nutrition_tracker.repositories.meal_repo import read_meals_for_date
-from nutrition_tracker.repositories.settings_repo import load_settings
-from nutrition_tracker.repositories.summary_repo import save_daily_summary
-from nutrition_tracker.schema_registry import validate_payload
-from nutrition_tracker.services.goal_service import effective_goals
-from nutrition_tracker.utils.dates import parse_date, parse_timestamp
+from nutrition_tracker.application.goals import effective_goals
+from nutrition_tracker.domain.constants import (
+    ALL_NUTRITION_METRICS,
+    GOAL_METRICS,
+    REQUIRED_NUTRITION_METRICS,
+)
+from nutrition_tracker.domain.dates import parse_date, parse_timestamp
+from nutrition_tracker.domain.entities import DailySummary, Meal
+from nutrition_tracker.infrastructure.meal_repository import read_meals_for_date
+from nutrition_tracker.infrastructure.schema_store import validate_payload
+from nutrition_tracker.infrastructure.settings_repository import load_settings
+from nutrition_tracker.infrastructure.summary_repository import save_daily_summary
 
 
 def _round_number(value: float) -> float | int:
@@ -17,7 +24,7 @@ def _round_number(value: float) -> float | int:
     return rounded
 
 
-def calculate_totals(meals: list[dict[str, Any]]) -> dict[str, float | int]:
+def calculate_totals(meals: list[Meal]) -> dict[str, float | int]:
     totals: dict[str, float] = {metric: 0.0 for metric in REQUIRED_NUTRITION_METRICS}
     for meal in meals:
         nutrition = meal.get("nutrition", {})
@@ -52,7 +59,7 @@ def _progress(totals: dict[str, float | int], goals: dict[str, float]) -> dict[s
     return progress
 
 
-def _data_confidence(meals: list[dict[str, Any]]) -> str:
+def _data_confidence(meals: list[Meal]) -> str:
     if not meals:
         return "unknown"
     confidence_values: list[str] = []
@@ -71,7 +78,7 @@ def _data_confidence(meals: list[dict[str, Any]]) -> str:
     return "high"
 
 
-def _signals(meals: list[dict[str, Any]]) -> dict[str, Any]:
+def _signals(meals: list[Meal]) -> dict[str, Any]:
     fruit = 0.0
     vegetables = 0.0
     processed = 0
@@ -90,7 +97,7 @@ def _signals(meals: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def build_daily_summary(root: Path, date_str: str) -> dict[str, Any]:
+def build_daily_summary(root: Path, date_str: str) -> DailySummary:
     parse_date(date_str)
     meals = read_meals_for_date(root, date_str)
     for meal in meals:
@@ -99,7 +106,7 @@ def build_daily_summary(root: Path, date_str: str) -> dict[str, Any]:
 
     totals = calculate_totals(meals)
     goals = _goal_values(root)
-    summary = {
+    summary: DailySummary = {
         "date": date_str,
         "meals": meals,
         "totals": totals,
